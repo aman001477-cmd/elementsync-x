@@ -1,7 +1,7 @@
 {
-  "name": "ElementSync X — 6 Mode God Player",
-  "short_name": "ElementSync X",
-  "description": "Elements visualizer, music + video player, dual lyrical karaoke, online search with lyrics, AI lyrics lab. All in one installable app.",
+  "name": "Dhunn — Simple Music Player",
+  "short_name": "Dhunn",
+  "description": "Dhunn: search songs, play previews, sing along with auto-fetched karaoke lyrics + Hindi translation.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

@@ -1,5 +1,5 @@
 /* ElementSync X service worker — app-shell offline, APIs always network. */
-const VER = 'esx-v1';
+const VER = 'dhunn-v1';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
