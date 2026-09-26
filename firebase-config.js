@@ -1,13 +1,12 @@
-// ElementSync X — Firebase web config (project: xyz1-4038e).
-// YE FILE GITIGNORED HAI — kabhi commit mat karna.
-// ⏳ BAAKI 1 CHEEZ: Firebase Console → Project Settings → "Add app" → Web (</>)
-//    → wahan se "appId" (1:217580360264:web:XXXX jaisa) copy karke neeche PASTE_WEB_APP_ID ki jagah daalo.
-//    Bina web-appId ke Google popup fail ho sakta hai.
+// ElementSync X — Firebase web config (project: xyz1-4038e, web app registered).
+// NOTE: Firebase web keys are public by design — security comes from Firestore
+// rules (locked to owner-only). Admin SDK keys must NEVER go in this repo.
 window.ESX_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAtxB0MguGu0t8X9cfRGikWsi-E6kDZnFI",
+  apiKey: "AIzaSyC6YQe16DWhWgN1h-8vb9gpoqa8hf7h-N8",
   authDomain: "xyz1-4038e.firebaseapp.com",
   projectId: "xyz1-4038e",
   storageBucket: "xyz1-4038e.firebasestorage.app",
   messagingSenderId: "217580360264",
-  appId: "PASTE_WEB_APP_ID"
+  appId: "1:217580360264:web:f85a15a22acf604fca7e7d",
+  measurementId: "G-6X7TB4FY9S"
 };
