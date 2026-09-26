@@ -3,226 +3,477 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Dhunn — Simple Music Player</title>
-<meta name="description" content="Dhunn: search songs, play 30s previews, and read auto-fetched lyrics karaoke-style. Simple, fast, beautiful."/>
-<meta name="theme-color" content="#070b18"/>
+<title>Dhunn — Music Player</title>
+<meta name="description" content="Dhunn: browse songs, watch videos, sing along with synced lyrics. Video, Simple and Lyrical stage modes + downloads."/>
+<meta name="theme-color" content="#030303"/>
 <link rel="manifest" href="manifest.webmanifest"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
-:root{--bg:#070b18;--tx:#eef2ff;--mut:#8b94b3;--cy:#22d3ee;--vi:#8b5cf6;--card:rgba(255,255,255,.05);--str:rgba(255,255,255,.11)}
+:root{--bg:#030303;--panel:#121212;--panel2:#1c1c1c;--tx:#fff;--mut:#aaa;--red:#ff3b3b;--str:rgba(255,255,255,.09)}
 html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(1000px 500px at 20% -5%,#12314a 0%,transparent 60%),radial-gradient(900px 500px at 90% 0%,#2b1d5a 0%,transparent 60%),linear-gradient(180deg,#070b18,#0b1226);color:var(--tx);font-family:"Space Grotesk",system-ui,sans-serif;min-height:100vh}
-::selection{background:var(--cy);color:#000}
-.wrap{max-width:980px;margin:0 auto;padding:22px 16px 70px}
-/* header */
-header{display:flex;align-items:center;gap:12px;padding:6px 2px 18px}
-.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--cy),var(--vi));display:grid;place-items:center;font-size:22px;box-shadow:0 8px 26px #22d3ee44;flex-shrink:0}
-header h1{margin:0;font-size:21px;letter-spacing:.01em}
-header h1 span{background:linear-gradient(90deg,var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent}
-header p{margin:1px 0 0;font-size:12px;color:var(--mut)}
-#install-btn{margin-left:auto;background:var(--card);border:1px solid var(--str);color:var(--tx);border-radius:999px;padding:9px 16px;font:600 13px inherit;cursor:pointer}
-#install-btn:hover{border-color:var(--cy)}
-/* search */
-.search{display:flex;gap:10px;flex-wrap:wrap}
-.search input{flex:1;min-width:200px;background:#020617;border:1px solid var(--str);color:#fff;border-radius:999px;padding:13px 20px;font-size:15px;outline:none;font:inherit}
-.search input:focus{border-color:var(--cy);box-shadow:0 0 0 3px #22d3ee22}
-.search button{border:0;border-radius:999px;padding:13px 26px;font:700 14px inherit;background:linear-gradient(90deg,var(--cy),var(--vi));color:#06121f;cursor:pointer}
-.search button:hover{filter:brightness(1.1)}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
-.chips button{background:#ffffff0a;border:1px solid var(--str);color:#cbd5e1;border-radius:999px;padding:8px 15px;font:600 12px inherit;cursor:pointer;transition:.2s}
-.chips button:hover{border-color:var(--cy);color:var(--cy);transform:translateY(-2px)}
-/* hero */
-.hero{margin-top:18px;background:var(--card);border:1px solid var(--str);border-radius:24px;backdrop-filter:blur(14px);overflow:hidden;position:relative}
-.hero-glow{position:absolute;inset:0;opacity:.35;filter:blur(70px) saturate(1.4);background-size:cover;background-position:center;transition:background-image .6s;pointer-events:none}
-.hero-in{position:relative;display:flex;gap:22px;padding:24px;align-items:center;flex-wrap:wrap}
-.art{width:230px;height:230px;border-radius:20px;object-fit:cover;flex-shrink:0;background:#111a30;box-shadow:0 20px 60px #000c}
-.info{flex:1;min-width:240px}
-.info .k{font-size:11px;letter-spacing:.22em;color:var(--cy);font-weight:700}
-.info h2{margin:6px 0 2px;font-size:26px;line-height:1.2}
-.info p{margin:0 0 14px;color:var(--mut);font-size:14px}
-.eq{display:flex;gap:4px;align-items:flex-end;height:26px;margin-bottom:12px}
-.eq i{width:6px;border-radius:3px;background:linear-gradient(180deg,var(--cy),var(--vi));animation:eq .9s ease-in-out infinite}
-.eq i:nth-child(2){animation-delay:.15s}.eq i:nth-child(3){animation-delay:.3s}.eq i:nth-child(4){animation-delay:.45s}.eq i:nth-child(5){animation-delay:.6s}
-.eq.paused i{animation-play-state:paused;height:5px!important}
-@keyframes eq{0%,100%{height:6px}50%{height:24px}}
-.bar{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
-input[type=range].seek{flex:1;appearance:none;height:7px;border-radius:99px;background:linear-gradient(90deg,var(--cy) var(--f,0%),#ffffff20 var(--f,0%));outline:none;cursor:pointer}
-input[type=range].seek::-webkit-slider-thumb{appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--cy)}
-.controls{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
-.play{width:58px;height:58px;border-radius:50%;border:0;font-size:22px;background:linear-gradient(135deg,var(--cy),var(--vi));color:#06121f;cursor:pointer;box-shadow:0 10px 28px #22d3ee55;transition:.2s;display:grid;place-items:center}
-.play:hover{transform:scale(1.07)}
-.cbtn{background:#ffffff10;border:1px solid var(--str);color:#fff;border-radius:12px;padding:10px 15px;font:600 14px inherit;cursor:pointer}
-.cbtn:hover{border-color:var(--cy)}
-.vol{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut)}
-.vol input{width:100px;accent-color:var(--cy)}
-/* lyrics */
-.lyrics{margin-top:16px;background:var(--card);border:1px solid var(--str);border-radius:24px;overflow:hidden}
-.lyr-head{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
-.lyr-head h3{margin:0;font-size:12px;letter-spacing:.2em;color:#cbd5e1}
-.lyr-head span{font-size:11px;color:var(--mut)}
-#tr-btn{margin-left:auto;background:#ffffff10;border:1px solid var(--str);color:var(--tx);border-radius:999px;padding:8px 16px;font:600 12px inherit;cursor:pointer}
-#tr-btn.on{background:linear-gradient(90deg,#a3e635,#22d3ee);color:#06121f;border:0}
-#lines{max-height:380px;overflow:auto;padding:12px 14px}
-.line{padding:11px 14px;border-radius:13px;font-size:16px;opacity:.5;transition:.25s;border:1px solid transparent;cursor:pointer}
-.line:hover{background:#ffffff08;opacity:.85}
-.line .sub{font-size:12px;color:var(--mut);margin-top:2px}
-.line.on{opacity:1;background:linear-gradient(90deg,#22d3ee22,#8b5cf622);border-color:#22d3ee44;transform:scale(1.015)}
-.empty{padding:34px 20px;text-align:center;color:var(--mut);font-size:14px;line-height:1.7}
-/* results */
-h2.sec{font-size:12px;letter-spacing:.2em;color:#cbd5e1;margin:26px 2px 12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
-.card{background:var(--card);border:1px solid var(--str);border-radius:18px;overflow:hidden;cursor:pointer;transition:.25s;animation:vin .45s both}
-.card:hover{transform:translateY(-5px);border-color:var(--cy);box-shadow:0 16px 40px #22d3ee22}
-@keyframes vin{from{opacity:0;transform:translateY(14px)}}
-.card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#111a30}
-.card.playing{border-color:var(--cy);box-shadow:0 0 0 2px #22d3ee55}
-.card .b{padding:10px 11px}
-.card b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card span{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-footer{margin-top:34px;text-align:center;color:var(--mut);font-size:12px}
-#toasts{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:50}
-.toast{background:#0b1226f2;border:1px solid var(--cy);border-radius:12px;padding:11px 15px;font-size:13px;animation:vin .3s}
-.spin{width:14px;height:14px;border:2px solid #ffffff30;border-top-color:var(--cy);border-radius:50%;display:inline-block;animation:spin 1s linear infinite;vertical-align:-2px}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif;min-height:100vh;padding-bottom:96px}
+::selection{background:var(--red);color:#fff}
+button{font-family:inherit}
+/* layout */
+#app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+/* sidebar */
+aside{background:#000;border-right:1px solid var(--str);padding:18px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.navbtn{display:flex;gap:16px;align-items:center;width:100%;background:transparent;border:0;color:var(--tx);font-size:15px;font-weight:600;padding:11px 14px;border-radius:10px;cursor:pointer;text-align:left}
+.navbtn:hover{background:#ffffff14}
+.navbtn.on{background:#ffffff1c}
+.navbtn .ic{font-size:20px;width:26px;text-align:center}
+.hr{border:0;border-top:1px solid var(--str);margin:14px 6px}
+.newpl{display:flex;gap:10px;align-items:center;justify-content:center;background:#ffffff1c;border:0;color:#fff;border-radius:999px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin:2px 0 8px}
+.newpl:hover{background:#ffffff2a}
+#pl-newbox{display:none;gap:6px;margin:0 4px 8px}
+#pl-newbox.open{display:flex}
+#pl-newbox input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--str);color:#fff;border-radius:9px;padding:9px 10px;font-size:13px;outline:none}
+#pl-newbox button{background:var(--red);border:0;color:#fff;border-radius:9px;padding:9px 12px;font-weight:700;cursor:pointer}
+.librow{display:block;width:100%;background:transparent;border:0;color:var(--tx);text-align:left;padding:9px 14px;border-radius:10px;cursor:pointer}
+.librow:hover{background:#ffffff10}
+.librow b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.librow span{font-size:12px;color:var(--mut)}
+.side-note{font-size:11px;color:#666;padding:12px 14px;line-height:1.6}
+/* main */
+main{min-width:0;padding:16px 22px 30px}
+.topbar{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.topbar input{flex:1;background:#ffffff0d;border:1px solid var(--str);color:#fff;border-radius:999px;padding:11px 20px;font-size:14px;outline:none;font:inherit;min-width:0}
+.topbar input:focus{border-color:#ffffff40}
+.topbar .go{background:#fff;color:#000;border:0;border-radius:999px;padding:11px 24px;font-weight:700;cursor:pointer;font-size:14px}
+#install-btn{background:transparent;border:1px solid var(--str);color:#fff;border-radius:999px;padding:10px 16px;font-size:13px;cursor:pointer;white-space:nowrap}
+.view{display:none;animation:vin .4s}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(12px)}}
+/* home grid */
+.home{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:start}
+/* stage */
+.stage{background:var(--panel);border:1px solid var(--str);border-radius:16px;overflow:hidden}
+.seg{display:flex;background:#000;padding:10px 12px 0;gap:26px;border-bottom:1px solid var(--str)}
+.seg button{background:transparent;border:0;color:var(--mut);font-size:13px;font-weight:700;letter-spacing:.08em;padding:10px 2px 12px;cursor:pointer;border-bottom:2px solid transparent}
+.seg button.on{color:#fff;border-bottom-color:#fff}
+.pane{display:none;min-height:430px}
+.pane.on{display:block;animation:vin .4s}
+/* simple pane */
+#pane-simple{position:relative;display:none;place-items:center;padding:34px 20px;overflow:hidden}
+#pane-simple.on{display:grid}
+#pane-simple .bg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(60px) brightness(.5);opacity:.7}
+#pane-simple img{position:relative;width:min(360px,80%);border-radius:12px;box-shadow:0 30px 80px #000}
+#pane-simple .t{position:relative;text-align:center;margin-top:16px}
+#pane-simple .t b{display:block;font-size:20px}
+#pane-simple .t span{color:var(--mut);font-size:14px}
+/* video pane */
+#pane-video{padding:0;background:#000}
+#pane-video video{width:100%;max-height:480px;display:block;background:#000}
+.vid-fallback{padding:60px 24px;text-align:center;color:var(--mut)}
+.vid-fallback img{width:180px;border-radius:12px;margin-bottom:14px}
+.vid-fallback a{color:#fff}
+/* lyric pane */
+#pane-lyric{position:relative;overflow:hidden;background:#000}
+#pane-lyric .bg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(70px) brightness(.35)}
+#biglines{position:relative;max-height:480px;overflow:auto;padding:44px 30px;text-align:center}
+.bigline{font-family:"Space Grotesk",Inter,sans-serif;font-size:21px;font-weight:500;color:#ffffff55;margin:0 auto 20px;max-width:640px;cursor:pointer;transition:all .35s;line-height:1.45}
+.bigline:hover{color:#fff}
+.bigline.on{color:#fff;font-size:31px;font-weight:700;text-shadow:0 4px 30px #ff3b3b66;transform:scale(1.02)}
+.bigline .tr{font-size:14px;color:var(--mut);font-weight:400;margin-top:4px}
+/* queue panel */
+.queue{background:var(--panel);border:1px solid var(--str);border-radius:16px;overflow:hidden}
+.qtabs{display:flex;gap:26px;padding:12px 16px 0;border-bottom:1px solid var(--str)}
+.qtabs button{background:transparent;border:0;color:var(--mut);font-size:13px;font-weight:700;letter-spacing:.06em;padding:10px 2px;cursor:pointer;border-bottom:2px solid transparent}
+.qtabs button.on{color:#fff;border-bottom-color:#fff}
+.qlist{max-height:520px;overflow:auto;padding:8px}
+.qrow{display:flex;gap:12px;align-items:center;width:100%;background:transparent;border:0;color:#fff;text-align:left;padding:9px 10px;border-radius:10px;cursor:pointer}
+.qrow:hover{background:#ffffff0d}
+.qrow.on{background:#ffffff14}
+.qrow img{width:44px;height:44px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#222}
+.qrow .mi{flex:1;min-width:0}
+.qrow .mi b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.qrow .mi span{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.qrow .du{font-size:13px;color:var(--mut);flex-shrink:0}
+.qrow .plus{background:transparent;border:0;color:var(--mut);font-size:18px;cursor:pointer;padding:6px;border-radius:8px;flex-shrink:0}
+.qrow .plus:hover{color:#fff;background:#ffffff18}
+.qlyr{padding:12px 16px;font-size:15px;line-height:2;max-height:520px;overflow:auto}
+.qlyr div{color:#ffffff70;cursor:pointer;padding:2px 6px;border-radius:6px}
+.qlyr div:hover{color:#fff}
+.qlyr div.on{color:#fff;font-weight:700;background:#ffffff12}
+/* explore */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.chips button{background:#ffffff10;border:1px solid var(--str);color:#fff;border-radius:999px;padding:9px 17px;font-size:13px;font-weight:600;cursor:pointer}
+.chips button:hover{background:#ffffff22}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:16px}
+.card{cursor:pointer;animation:vin .4s both}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#1a1a1a}
+.card:hover img{box-shadow:0 12px 34px #000}
+.card b{display:block;font-size:14px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card span{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+/* library */
+.libsec{background:var(--panel);border:1px solid var(--str);border-radius:16px;padding:16px 18px;margin-bottom:14px}
+.libsec h3{margin:0 0 10px;font-size:15px}
+/* bottom player */
+#bar{position:fixed;left:0;right:0;bottom:0;background:#0d0d0df5;border-top:1px solid var(--str);z-index:40;backdrop-filter:blur(12px)}
+#prog{width:100%;appearance:none;height:4px;background:#ffffff22;outline:none;cursor:pointer;display:block}
+#prog::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:var(--red)}
+.bar-in{display:flex;align-items:center;gap:14px;padding:8px 18px}
+.bctl{display:flex;align-items:center;gap:14px}
+.bctl button{background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer}
+.bctl .pp{font-size:30px}
+.btime{font-size:12px;color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
+.binfo{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.binfo img{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#222;flex-shrink:0}
+.binfo .t{min-width:0}
+.binfo b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.binfo span{display:block;font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bacts{display:flex;align-items:center;gap:6px}
+.ibtn{background:transparent;border:0;color:#ccc;font-size:19px;cursor:pointer;padding:8px;border-radius:50%}
+.ibtn:hover{background:#ffffff14}
+.ibtn.liked{color:var(--red)}
+.ibtn.on{color:#fff;background:#ffffff1c}
+.vol{display:flex;align-items:center;gap:6px}
+.vol input{width:90px;accent-color:#fff}
+#dlmenu{position:fixed;bottom:96px;right:16px;background:#1e1e1e;border:1px solid var(--str);border-radius:14px;padding:8px;display:none;z-index:60;min-width:220px;box-shadow:0 20px 60px #000}
+#dlmenu.open{display:block}
+#dlmenu button{display:block;width:100%;background:transparent;border:0;color:#fff;text-align:left;padding:11px 14px;border-radius:9px;font-size:14px;cursor:pointer}
+#dlmenu button:hover{background:#ffffff14}
+#plmenu{position:fixed;background:#1e1e1e;border:1px solid var(--str);border-radius:14px;padding:8px;display:none;z-index:60;min-width:220px;box-shadow:0 20px 60px #000}
+#plmenu.open{display:block}
+#plmenu button{display:block;width:100%;background:transparent;border:0;color:#fff;text-align:left;padding:10px 14px;border-radius:9px;font-size:14px;cursor:pointer}
+#plmenu button:hover{background:#ffffff14}
+/* mobile nav */
+#mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:#000;border-top:1px solid var(--str);z-index:39;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+#mnav div{display:flex;justify-content:space-around}
+#mnav button{background:transparent;border:0;color:var(--mut);font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px}
+#mnav button.on{color:#fff}
+#mnav button b{font-size:18px;font-weight:400}
+body{padding-bottom:96px}
+@media(max-width:900px){
+  #app{grid-template-columns:1fr}
+  aside{display:none}
+  .home{grid-template-columns:1fr}
+  #mnav{display:block}
+  body{padding-bottom:170px}
+  #bar{bottom:57px}
+  #dlmenu{bottom:170px}
+  .vol input{width:60px}
+  .btime{display:none}
+  .bigline{font-size:18px}.bigline.on{font-size:25px}
+}
+#toasts{position:fixed;bottom:110px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:80}
+.toast{background:#1e1e1e;border:1px solid #ffffff2a;border-radius:12px;padding:11px 15px;font-size:13px;animation:vin .3s;box-shadow:0 14px 40px #000}
+.spin{width:13px;height:13px;border:2px solid #ffffff30;border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;vertical-align:-2px}
 @keyframes spin{to{transform:rotate(360deg)}}
 audio{display:none}
-@media(max-width:640px){.hero-in{padding:18px}.art{width:100%;height:220px}.info h2{font-size:22px}.vol{margin-left:0}}
-button:focus-visible,input:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <div class="logo">♪</div>
-  <div><h1>Dhunn <span>Player</span></h1><p>search • play • sing along</p></div>
-  <button id="install-btn" hidden>📲 Install</button>
-</header>
+<div id="app">
+  <aside id="side">
+    <button class="navbtn on" data-v="home"><span class="ic">⌂</span>Home</button>
+    <button class="navbtn" data-v="explore"><span class="ic">◎</span>Explore</button>
+    <button class="navbtn" data-v="library"><span class="ic">▤</span>Library</button>
+    <hr class="hr"/>
+    <button class="newpl" id="np-btn">＋ New playlist</button>
+    <div id="pl-newbox"><input id="pl-name" placeholder="Playlist naam…"/><button id="pl-create">OK</button></div>
+    <div id="side-libs"></div>
+    <div class="side-note">Dhunn • 30s previews via iTunes • lyrics auto-fetch • video / simple / lyrical stage • downloads included</div>
+  </aside>
 
-<div class="search">
-  <input id="q" value="Arijit Singh" placeholder="Gaana ya artist search karo…"/>
-  <button id="go">Search</button>
-</div>
-<div class="chips" id="chips"></div>
+  <main>
+    <div class="topbar">
+      <input id="q" value="Arijit Singh" placeholder="Search songs, artists…"/>
+      <button class="go" id="go">Search</button>
+      <button id="install-btn" hidden>📲 Install</button>
+    </div>
 
-<section class="hero">
-  <div class="hero-glow" id="glow"></div>
-  <div class="hero-in">
-    <img class="art" id="art" alt="cover art"/>
-    <div class="info">
-      <div class="k" id="pill">30S PREVIEW • ITUNES</div>
-      <h2 id="title">Koi gaana chuno 👇</h2>
-      <p id="artist">Neeche search results me se tap karo</p>
-      <div class="eq paused" id="eq"><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="bar"><span id="cur">00:00.0</span><input type="range" class="seek" id="seek" min="0" max="30" step="0.1" value="0"/><span id="tot">00:30.0</span></div>
-      <div class="controls">
-        <button class="cbtn" id="prev">⏮</button>
-        <button class="play" id="play">▶</button>
-        <button class="cbtn" id="next">⏭</button>
-        <div class="vol">🔊 <input type="range" id="vol" min="0" max="1" step="0.01" value="0.9"/></div>
+    <section class="view on" id="v-home">
+      <div class="home">
+        <div class="stage">
+          <div class="seg">
+            <button data-s="video">VIDEO</button>
+            <button data-s="simple" class="on">SIMPLE</button>
+            <button data-s="lyric">LYRICS</button>
+          </div>
+          <div class="pane" id="pane-video">
+            <video id="vid" controls playsinline preload="none"></video>
+            <div class="vid-fallback" id="vid-fb" hidden>
+              <img id="vid-art" alt=""/><br/>
+              <b style="color:#fff">Video nahi mila is gaane ka</b>
+              <p>Music-video preview iTunes pe available nahi hai.<br/><a id="yt-link" href="#" target="_blank" rel="noopener">YouTube pe search karo ↗</a></p>
+            </div>
+          </div>
+          <div class="pane on" id="pane-simple">
+            <div class="bg" id="s-bg"></div>
+            <div><img id="s-art" alt="cover"/><div class="t"><b id="s-title">Gaana chuno 👇</b><span id="s-artist">Up Next me se tap karo</span></div></div>
+          </div>
+          <div class="pane" id="pane-lyric">
+            <div class="bg" id="l-bg"></div>
+            <div id="biglines"><div class="bigline" style="color:#888">Lyrics yahan sync me chalenge…</div></div>
+          </div>
+        </div>
+
+        <div class="queue">
+          <div class="qtabs">
+            <button data-t="up" class="on">UP NEXT</button>
+            <button data-t="ly">LYRICS</button>
+            <button data-t="rel">RELATED</button>
+          </div>
+          <div class="qlist" id="q-up"></div>
+          <div class="qlyr" id="q-ly" hidden></div>
+          <div class="qlist" id="q-rel" hidden></div>
+        </div>
       </div>
+    </section>
+
+    <section class="view" id="v-explore">
+      <div class="chips" id="chips"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="view" id="v-library">
+      <div class="libsec"><h3>❤ Liked music (<span id="lk-n">0</span>)</h3><div id="lib-liked"></div></div>
+      <div class="libsec"><h3>▤ Playlists</h3><div id="lib-pls"></div></div>
+    </section>
+  </main>
+</div>
+
+<nav id="mnav"><div>
+  <button data-v="home" class="on"><b>⌂</b>Home</button>
+  <button data-v="explore"><b>◎</b>Explore</button>
+  <button data-v="library"><b>▤</b>Library</button>
+</div></nav>
+
+<div id="bar">
+  <input type="range" id="prog" min="0" max="30" step="0.1" value="0"/>
+  <div class="bar-in">
+    <div class="bctl">
+      <button id="prev" title="Previous">⏮</button>
+      <button class="pp" id="play" title="Play/Pause">▶</button>
+      <button id="next" title="Next">⏭</button>
+    </div>
+    <span class="btime" id="time">0:00 / 0:30</span>
+    <div class="binfo"><img id="b-art" alt=""/><div class="t"><b id="b-title">Dhunn Player</b><span id="b-artist">gaana chuno • Up Next se</span></div></div>
+    <div class="bacts">
+      <button class="ibtn" id="like" title="Like">👍</button>
+      <button class="ibtn" id="dl" title="Download">⬇</button>
+      <button class="ibtn" id="shuf" title="Shuffle">🔀</button>
+      <button class="ibtn" id="rep" title="Repeat">🔁</button>
+      <div class="vol">🔊 <input type="range" id="vol" min="0" max="1" step="0.01" value="0.9"/></div>
     </div>
   </div>
-</section>
-
-<section class="lyrics">
-  <div class="lyr-head"><h3>● LYRICS — AUTO FETCH + KARAOKE</h3><span id="lyr-src">gaana bajao, lyrics khud aa jayenge</span><button id="tr-btn">🌐 हिंदी में देखो</button></div>
-  <div id="lines"><div class="empty">Yahan lyrics line-by-line highlight honge,<br/>audio ke saath — kisi line pe tap karke seek bhi kar sakte ho.</div></div>
-</section>
-
-<h2 class="sec">● SEARCH RESULTS — TAP TO PLAY</h2>
-<div class="grid" id="results"><div class="empty">Searching…</div></div>
-
-<footer>Dhunn • previews via iTunes (30s) • lyrics via lyrics.ovh • <b>Space</b> = play/pause</footer>
 </div>
 
-<audio id="audio" preload="auto"></audio>
+<div id="dlmenu">
+  <button id="dl-a">🎵 Audio download (.m4a preview)</button>
+  <button id="dl-l">📜 Lyrics download (.lrc)</button>
+  <button id="dl-v">🎬 Video download / open</button>
+</div>
+<div id="plmenu"></div>
 <div id="toasts"></div>
+<audio id="audio" preload="auto"></audio>
 
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=t=>{t=Math.max(0,t||0);const m=Math.floor(t/60),s=t-m*60;return String(m).padStart(2,"0")+":"+s.toFixed(1).padStart(4,"0")};
+const fmt=t=>{t=Math.max(0,t||0);return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0")};
+const fmt1=t=>{t=Math.max(0,t||0);const m=Math.floor(t/60),s=t-m*60;return m+":"+s.toFixed(1).padStart(4,"0")};
 const fms=t=>{const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")};
+const dur=ms=>{if(!ms)return "--:--";const s=Math.round(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+const art=(t,sz)=>((t.artworkUrl100||"").replace("100x100bb",(sz||600)+"x"+(sz||600)+"bb"));
 function toast(m){const d=document.createElement("div");d.className="toast";d.innerHTML=m;$("toasts").appendChild(d);setTimeout(()=>{d.style.transition=".4s";d.style.opacity="0";setTimeout(()=>d.remove(),400)},2600)}
+function dlBlob(b,n){const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("⬇ <b>"+esc(n)+"</b>")}
+const key=t=>String((t&&t.trackId)||(t&&t.previewUrl)||"");
+const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
 
-const P={results:[],cur:-1,lines:[],orig:"",trans:"",hi:false,lastHl:-1,seekAfter:null,
-init(){
-["Arijit Singh","AP Dhillon","Taylor Swift","The Weeknd","Pritam","Shreya Ghoshal"].forEach(c=>{const b=document.createElement("button");b.textContent=c;b.onclick=()=>{$("q").value=c;this.search()};$("chips").appendChild(b)});
-$("go").onclick=()=>this.search();
-$("q").addEventListener("keydown",e=>{if(e.key==="Enter")this.search()});
-const A=$("audio");
-A.volume=.9;
-A.addEventListener("loadedmetadata",()=>{const d=A.duration||30;$("tot").textContent=fmt(d);$("seek").max=d;if(this.seekAfter!=null){try{A.currentTime=this.seekAfter}catch(_){}this.seekAfter=null}});
-A.addEventListener("timeupdate",()=>{const t=A.currentTime||0;$("cur").textContent=fmt(t);const s=$("seek");s.value=t;s.style.setProperty("--f",(t/(A.duration||30)*100)+"%");this.hl(t)});
-A.addEventListener("play",()=>{$("play").textContent="⏸";$("eq").classList.remove("paused")});
-A.addEventListener("pause",()=>{$("play").textContent="▶";$("eq").classList.add("paused")});
-A.addEventListener("ended",()=>{if(this.cur<this.results.length-1)this.play(this.cur+1)});
-A.addEventListener("error",()=>toast("Audio load fail — doosra gaana try karo"));
-$("seek").addEventListener("input",e=>{try{A.currentTime=+e.target.value}catch(_){}});
+const S={results:[],cur:-1,lines:[],lastHl:-1,view:"home",stage:"simple",videoUrl:null,videoFor:"",
+liked:new Set(load("dh_liked",[])),pls:load("dh_pls",[]),relCache:{},shuf:false,rep:false,pendingPlus:null};
+
+function persistLiked(){save("dh_liked",[...S.liked])}
+function persistPls(){save("dh_pls",S.pls)}
+function trackByKey(k){return S.results.find(t=>key(t)===k)}
+
+/* ---------- views & stage ---------- */
+function go(v){S.view=v;document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$("v-"+v).classList.add("on");
+document.querySelectorAll("[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v))}
+document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>go(b.dataset.v));
+function setStage(s){S.stage=s;document.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));
+["video","simple","lyric"].forEach(k=>$("pane-"+k).classList.toggle("on",k===s));
+if(s==="video")enterVideo();else exitVideo()}
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>setStage(b.dataset.s));
+
+/* ---------- search / browse ---------- */
+async function search(q,entity){const e=entity||"song";
+try{const r=await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(q)+"&media=music&entity="+e+"&limit=20");const j=await r.json();return j.results||[]}catch(_){toast("Net error — retry karo");return[]}}
+async function doSearch(){const q=$("q").value.trim()||"Arijit Singh";
+$("grid").innerHTML='<div style="color:#aaa">Searching…</div>';
+const r=await search(q);S.results=r;renderQueue();renderGrid();toast(r.length+" gaane mile")}
+function renderGrid(){const g=$("grid");g.innerHTML=S.results.length?"":"<div style='color:#aaa'>Kuch nahi mila.</div>";
+S.results.forEach((t,i)=>{const c=document.createElement("div");c.className="card";c.style.animationDelay=Math.min(i*.03,.3)+"s";
+c.innerHTML='<img loading="lazy" src="'+art(t,400)+'" alt=""><b>'+esc(t.trackName||"")+'</b><span>'+esc(t.artistName||"")+' • '+dur(t.trackTimeMillis)+'</span>';
+c.onclick=()=>{go("home");play(i)};g.appendChild(c)})}
+
+/* ---------- queue / related ---------- */
+function renderQueue(){const q=$("q-up");q.innerHTML=S.results.length?"":"<div style='color:#aaa;padding:14px'>Queue khaali — Explore me search karo.</div>";
+S.results.forEach((t,i)=>{const r=document.createElement("button");r.className="qrow"+(i===S.cur?" on":"");
+r.innerHTML='<img loading="lazy" src="'+art(t,100)+'" alt=""><span class="mi"><b>'+esc(t.trackName||"")+'</b><span>'+esc(t.artistName||"")+'</span></span><span class="du">'+dur(t.trackTimeMillis)+'</span>';
+r.onclick=()=>play(i);
+const p=document.createElement("span");p.className="plus";p.textContent="＋";p.title="Playlist me add";
+p.onclick=e=>{e.stopPropagation();openPlMenu(e.clientX,e.clientY,t)};r.appendChild(p);q.appendChild(r)})}
+async function renderRelated(){const box=$("q-rel");const t=S.results[S.cur];if(!t){box.innerHTML="<div style='color:#aaa;padding:14px'>Pehle gaana bajao.</div>";return}
+const a=(t.artistName||"").split(/[,&]/)[0].trim();if(S.relCache[a])return drawRel(S.relCache[a]);
+box.innerHTML="<div style='color:#aaa;padding:14px'><span class='spin'></span> related…</div>";
+const r=(await search(a)).filter(x=>x.trackId!==t.trackId).slice(0,12);S.relCache[a]=r;drawRel(r)}
+function drawRel(r){const box=$("q-rel");box.innerHTML=r.length?"":"<div style='color:#aaa;padding:14px'>Related nahi mile.</div>";
+r.forEach(t=>{const b=document.createElement("button");b.className="qrow";
+b.innerHTML='<img loading="lazy" src="'+art(t,100)+'" alt=""><span class="mi"><b>'+esc(t.trackName||"")+'</b><span>'+esc(t.artistName||"")+'</span></span><span class="du">'+dur(t.trackTimeMillis)+'</span>';
+b.onclick=()=>{S.results=[t,...S.results.filter(x=>x.trackId!==t.trackId)];renderQueue();renderGrid();play(0)};box.appendChild(b)})}
+document.querySelectorAll(".qtabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".qtabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+$("q-up").hidden=b.dataset.t!=="up";$("q-ly").hidden=b.dataset.t!=="ly";$("q-rel").hidden=b.dataset.t!=="rel";
+if(b.dataset.t==="rel")renderRelated()});
+
+/* ---------- playback ---------- */
+const A=$("audio"),V=$("vid");
+function play(i){const t=S.results[i];if(!t)return;S.cur=i;exitVideo();
+const title=t.trackName||"Untitled",artist=t.artistName||"";
+$("b-title").textContent=title;$("b-artist").textContent=artist;$("b-art").src=art(t,200);
+$("s-title").textContent=title;$("s-artist").textContent=artist;$("s-art").src=art(t);$("s-bg").style.backgroundImage="url('"+art(t,200)+"')";
+$("l-bg").style.backgroundImage="url('"+art(t,200)+"')";
+document.title="▶ "+title+" • Dhunn";
+paintLike();renderQueue();
+A.src=t.previewUrl;A.play().catch(()=>toast("Play fail — dobara tap karo"));
+S.videoUrl=null;S.videoFor="";if(S.stage==="video")enterVideo();
+loadLyrics(artist,title)}
+function toggle(){if(!A.src)return toast("Pehle koi gaana chuno");A.paused?A.play().catch(()=>{}):A.pause()}
+function step(d){if(!S.results.length)return;let n=S.cur+d;
+if(S.shuf&&d!==0)n=Math.floor(Math.random()*S.results.length);
+if(n<0)n=S.results.length-1;if(n>=S.results.length){if(S.rep){n=0}else return}
+play(n)}
+A.addEventListener("loadedmetadata",()=>{$("prog").max=A.duration||30});
+A.addEventListener("timeupdate",()=>{const t=A.currentTime||0,d=A.duration||30;
+$("prog").value=t;$("prog").style.background="linear-gradient(90deg,var(--red) "+(t/d*100)+"%,#ffffff22 "+(t/d*100)+"%)";
+$("time").textContent=fmt(t)+" / "+fmt(d);hl(t)});
+A.addEventListener("play",()=>$("play").textContent="⏸");
+A.addEventListener("pause",()=>$("play").textContent="▶");
+A.addEventListener("ended",()=>{if(S.rep){A.currentTime=0;A.play().catch(()=>{})}else step(1)});
+A.addEventListener("error",()=>{if(A.src)toast("Audio error — doosra gaana try karo")});
+$("prog").addEventListener("input",e=>{try{A.currentTime=+e.target.value}catch(_){}});
 $("vol").addEventListener("input",e=>A.volume=+e.target.value);
-$("play").onclick=()=>this.toggle();
-$("prev").onclick=()=>{if(this.cur>0)this.play(this.cur-1)};
-$("next").onclick=()=>{if(this.cur<this.results.length-1)this.play(this.cur+1)};
-$("tr-btn").onclick=()=>this.translate();
-document.addEventListener("keydown",e=>{if(/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;if(e.code==="Space"){e.preventDefault();this.toggle()}});
-// PWA
-let def=null;const ib=$("install-btn");
-addEventListener("beforeinstallprompt",e=>{e.preventDefault();def=e;ib.hidden=false});
-ib.onclick=async()=>{if(!def)return toast("Browser menu → Install / Add to Home Screen");def.prompt();await def.userChoice;def=null;ib.hidden=true};
+$("play").onclick=toggle;$("prev").onclick=()=>step(-1);$("next").onclick=()=>step(1);
+$("shuf").onclick=e=>{S.shuf=!S.shuf;$("shuf").classList.toggle("on",S.shuf);toast("Shuffle "+(S.shuf?"ON":"OFF"))};
+$("rep").onclick=e=>{S.rep=!S.rep;$("rep").classList.toggle("on",S.rep);toast("Repeat "+(S.rep?"ON":"OFF"))};
+document.addEventListener("keydown",e=>{if(/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;if(e.code==="Space"){e.preventDefault();toggle()}});
+
+/* ---------- lyrics (auto-fetch + dual render) ---------- */
+const cleanA=a=>String(a||"").split(/[,&]/)[0].split(/feat\.?|ft\.?/i)[0].trim();
+const cleanT=t=>String(t||"").split(/\(|\[| feat\.?| ft\.?| -/)[0].trim();
+async function loadLyrics(artist,title){S.lines=[];S.lastHl=-1;
+$("q-ly").innerHTML="<div style='color:#aaa'><span class='spin'></span> lyrics…</div>";
+$("biglines").innerHTML='<div class="bigline" style="color:#888">Lyrics load ho rahe…</div>';
+for(const tt of [[cleanA(artist),cleanT(title)],[artist,title]]){try{
+const r=await fetch("https://api.lyrics.ovh/v1/"+encodeURIComponent(tt[0])+"/"+encodeURIComponent(tt[1]));const j=await r.json();
+if(j.lyrics&&j.lyrics.trim()){setLyrics(j.lyrics);return}}catch(_){}}
+$("q-ly").innerHTML="<div style='color:#aaa'>Lyrics nahi mile — English hits pe try karo.</div>";
+$("biglines").innerHTML='<div class="bigline" style="color:#888">Lyrics nahi mile is gaane ke 😔</div>'}
+function setLyrics(txt){const raw=txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+const d=A.duration||30;S.lines=raw.map((x,i)=>({t:i*(d/Math.max(1,raw.length)),x}));
+const q=$("q-ly");q.innerHTML="";S.lines.forEach(l=>{const d2=document.createElement("div");d2.textContent=l.x;
+d2.onclick=()=>{try{A.currentTime=l.t+.01}catch(_){}};q.appendChild(d2)});
+const b=$("biglines");b.innerHTML="";S.lines.forEach(l=>{const d2=document.createElement("div");d2.className="bigline";d2.textContent=l.x;
+d2.onclick=()=>{try{A.currentTime=l.t+.01}catch(_){}};b.appendChild(d2)});
+S.lastHl=-1;hl(A.currentTime||0)}
+function hl(t){if(!S.lines.length)return;let bi=0;S.lines.forEach((l,i)=>{if(t>=l.t-.05)bi=i});
+if(bi===S.lastHl)return;S.lastHl=bi;
+const ql=document.querySelectorAll("#q-ly div"),bl=document.querySelectorAll("#biglines .bigline");
+ql.forEach((e,i)=>{e.classList.toggle("on",i===bi);if(i===bi&&S.view==="home")e.scrollIntoView({block:"nearest"})});
+bl.forEach((e,i)=>{e.classList.toggle("on",i===bi);if(i===bi&&S.stage==="lyric")e.scrollIntoView({block:"center",behavior:"smooth"})})}
+
+/* ---------- video mode ---------- */
+async function enterVideo(){const t=S.results[S.cur];if(!t||!t.previewUrl){showVidFb(t);return}
+if(S.videoFor===key(t)&&S.videoUrl){loadVid();return}
+$("vid-fb").hidden=true;V.style.display="";V.poster=art(t,600);
+$("vid-fb").hidden=true;
+try{
+const q=((t.artistName||"")+" "+(t.trackName||"")).trim();
+const r=await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(q)+"&media=musicVideo&entity=musicVideo&limit=8");const j=await r.json();
+const mvs=j.results||[];
+const norm=s=>String(s||"").toLowerCase().replace(/[^a-z0-9 ]/g,"");
+const ct=norm(cleanT(t.trackName)),ca=norm(cleanA(t.artistName));
+const m=mvs.find(v=>norm(v.trackName).includes(ct)||(ct&&norm(v.trackName).includes(ct.slice(0,12)))||(norm(v.artistName).includes(ca)&&ca.length>2));
+if(m&&m.previewUrl){S.videoUrl=m.previewUrl;S.videoFor=key(t);loadVid()}
+else showVidFb(t);
+}catch(_){showVidFb(t)}}
+function loadVid(){try{A.pause()}catch(_){}V.src=S.videoUrl;V.play().catch(()=>{});toast("🎬 Video preview chal raha")}
+function showVidFb(t){V.removeAttribute("src");try{V.pause()}catch(_){}V.style.display="none";const f=$("vid-fb");f.hidden=false;
+if(t){$("vid-art").src=art(t,300);$("yt-link").href="https://www.youtube.com/results?search_query="+encodeURIComponent((t.trackName||"")+" "+(t.artistName||"")+" official video")}}
+function exitVideo(){try{V.pause()}catch(_){}}
+
+/* ---------- downloads ---------- */
+$("dl").onclick=e=>{e.stopPropagation();$("dlmenu").classList.toggle("open")};
+document.addEventListener("click",e=>{if(!e.target.closest("#dlmenu")&&!e.target.closest("#dl"))$("dlmenu").classList.remove("open");
+if(!e.target.closest("#plmenu"))$("plmenu").classList.remove("open")});
+$("dl-a").onclick=async()=>{$("dlmenu").classList.remove("open");const t=S.results[S.cur];if(!t)return toast("Pehle gaana bajao");
+toast("⬇ Audio fetch…");try{const r=await fetch(t.previewUrl);const b=await r.blob();
+dlBlob(b,(t.trackName||"track").replace(/[^\w\- ]+/g,"").trim()+".m4a")}catch(_){window.open(t.previewUrl,"_blank")}};
+$("dl-l").onclick=()=>{$("dlmenu").classList.remove("open");if(!S.lines.length)return toast("Lyrics empty — pehle load hone do");
+const t=S.results[S.cur]||{};const lrc=S.lines.map(l=>"["+fms(l.t).slice(3)+".00] "+l.x).join("\n");
+dlBlob(new Blob([lrc],{type:"text/plain"}),(cleanT(t.trackName)||"lyrics")+".lrc")};
+$("dl-v").onclick=()=>{$("dlmenu").classList.remove("open");if(S.videoUrl){const a=document.createElement("a");a.href=S.videoUrl;a.download="video.m4v";a.target="_blank";document.body.appendChild(a);a.click();a.remove();toast("⬇ Video download")}
+else toast("Video available nahi — VIDEO mode kholo pehle")};
+
+/* ---------- like / library / playlists ---------- */
+function paintLike(){const t=S.results[S.cur];$("like").classList.toggle("liked",!!(t&&S.liked.has(key(t))))}
+$("like").onclick=()=>{const t=S.results[S.cur];if(!t)return toast("Pehle gaana bajao");const k=key(t);
+if(S.liked.has(k)){S.liked.delete(k);toast("Liked se hataya")}else{S.liked.add(k);save("dh_liked_tracks",{...load("dh_liked_tracks",{}),[k]:slim(t)});toast("❤ Liked!")}
+persistLiked();paintLike();renderSide();renderLibrary()};
+function slim(t){return{trackId:t.trackId,trackName:t.trackName,artistName:t.artistName,artworkUrl100:t.artworkUrl100,previewUrl:t.previewUrl,trackTimeMillis:t.trackTimeMillis,collectionName:t.collectionName}}
+function likedTracks(){const m=load("dh_liked_tracks",{});return[...S.liked].map(k=>m[k]||trackByKey(k)).filter(Boolean)}
+function renderSide(){const box=$("side-libs");box.innerHTML="";
+const lk=document.createElement("button");lk.className="librow";
+lk.innerHTML="<b>❤ Liked music</b><span>Auto playlist • "+S.liked.size+" songs</span>";lk.onclick=()=>go("library");box.appendChild(lk);
+S.pls.forEach((p,i)=>{const b=document.createElement("button");b.className="librow";
+b.innerHTML="<b>"+esc(p.name)+"</b><span>Playlist • "+p.tracks.length+" songs</span>";b.onclick=()=>go("library");box.appendChild(b)})}
+$("np-btn").onclick=()=>$("pl-newbox").classList.toggle("open");
+$("pl-create").onclick=()=>{const n=$("pl-name").value.trim()||("Playlist "+(S.pls.length+1));
+S.pls.push({id:"p"+Date.now(),name:n,tracks:[]});$("pl-name").value="";$("pl-newbox").classList.remove("open");persistPls();renderSide();renderLibrary();toast("Playlist <b>"+esc(n)+"</b> bani")};
+function rowHtml(t,withX){return '<img loading="lazy" src="'+art(t,100)+'" alt=""><span class="mi"><b>'+esc(t.trackName||"")+'</b><span>'+esc(t.artistName||"")+'</span></span><span class="du">'+dur(t.trackTimeMillis)+'</span>'}
+function renderLibrary(){
+let h=$("lib-liked");h.innerHTML="";const lt=likedTracks();$("lk-n").textContent=lt.length;
+if(!lt.length)h.innerHTML="<div style='color:#aaa;font-size:13px'>Abhi khaali — gaane pe 👍 dabao.</div>";
+lt.forEach(t=>{const r=document.createElement("button");r.className="qrow";r.innerHTML=rowHtml(t);r.onclick=()=>playTrackObj(t);h.appendChild(r)});
+const p=$("lib-pls");p.innerHTML=S.pls.length?"":"<div style='color:#aaa;font-size:13px'>Koi playlist nahi — sidebar se banao.</div>";
+S.pls.forEach((pl,pi)=>{const d=document.createElement("div");d.style.marginBottom="12px";
+d.innerHTML="<b style='font-size:14px'>▤ "+esc(pl.name)+"</b> <span style='color:#aaa;font-size:12px'>"+pl.tracks.length+" songs</span> <button data-a='del' style='background:none;border:0;color:#f66;cursor:pointer;font-size:12px'>delete</button>";
+d.querySelector("[data-a=del]").onclick=()=>{if(confirm("'"+pl.name+"' delete?")){S.pls.splice(pi,1);persistPls();renderSide();renderLibrary()}};
+const lst=document.createElement("div");pl.tracks.forEach((k,ki)=>{const t=trackByKey(k)||(load("dh_liked_tracks",{})[k]);
+if(!t)return;const r=document.createElement("button");r.className="qrow";r.innerHTML=rowHtml(t);
+r.onclick=()=>playTrackObj(t);
+const x=document.createElement("span");x.textContent="✕";x.style.cssText="color:#f66;padding:8px;cursor:pointer";
+x.onclick=e=>{e.stopPropagation();pl.tracks.splice(ki,1);persistPls();renderSide();renderLibrary()};r.appendChild(x);lst.appendChild(r)});
+d.appendChild(lst);p.appendChild(d)})}
+function playTrackObj(t){S.results=[t,...S.results.filter(x=>key(x)!==key(t))];renderQueue();renderGrid();go("home");play(0)}
+function openPlMenu(x,y,t){const m=$("plmenu");m.innerHTML="";
+if(!S.pls.length)m.innerHTML="<div style='padding:10px 14px;color:#aaa;font-size:13px'>Koi playlist nahi — sidebar se banao.</div>";
+S.pls.forEach(p=>{const b=document.createElement("button");b.textContent="▤ "+p.name;
+b.onclick=()=>{p.tracks.push(slim(t));persistPls();renderSide();renderLibrary();m.classList.remove("open");toast("➕ "+esc(p.name))};m.appendChild(b)});
+m.style.left=Math.min(x,innerWidth-240)+"px";m.style.top=Math.min(y,innerHeight-200)+"px";m.classList.add("open")}
+
+/* ---------- explore chips / init ---------- */
+["Arijit Singh","Pritam","AP Dhillon","Taylor Swift","Shreya Ghoshal","Punjabi Hits"].forEach(c=>{const b=document.createElement("button");b.textContent=c;
+b.onclick=()=>{$("q").value=c;doSearch()};$("chips").appendChild(b)});
+$("go").onclick=doSearch;
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch()});
+let idef=null;const ib=$("install-btn");
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();idef=e;ib.hidden=false});
+ib.onclick=async()=>{if(!idef)return toast("Browser menu → Install");idef.prompt();await idef.userChoice;idef=null;ib.hidden=true};
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-this.search();
-},
-toggle(){const A=$("audio");if(!A.src)return toast("Pehle neeche se koi gaana chuno");A.paused?A.play().catch(()=>{}):A.pause()},
-cleanA(a){return String(a||"").split(/[,&]/)[0].split(/feat\.?|ft\.?/i)[0].trim()},
-cleanT(t){return String(t||"").split(/\(|\[| feat\.?| ft\.?| -/)[0].trim()},
-async search(){const q=$("q").value.trim()||"Arijit Singh";$("pill").innerHTML='<span class="spin"></span> SEARCHING';$("results").innerHTML='<div class="empty">Searching…</div>';
-try{const r=await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(q)+"&media=music&entity=song&limit=20");const j=await r.json();
-this.results=j.results||[];$("pill").textContent="30S PREVIEW • "+this.results.length+" FOUND";
-if(!this.results.length){$("results").innerHTML='<div class="empty">Kuch nahi mila — aur kuch likhke dekho.</div>';return}
-this.render()}catch(e){$("pill").textContent="OFFLINE?";$("results").innerHTML='<div class="empty">Net/API error — connection check karke retry karo.</div>'}},
-render(){const g=$("results");g.innerHTML="";this.results.forEach((t,i)=>{const art=(t.artworkUrl100||"").replace("100x100bb","600x600bb");
-const c=document.createElement("div");c.className="card"+(i===this.cur?" playing":"");c.style.animationDelay=Math.min(i*.04,.4)+"s";
-c.innerHTML='<img loading="lazy" src="'+art+'" alt=""><div class="b"><b>'+esc(t.trackName||"Untitled")+'</b><span>'+esc(t.artistName||"")+'</span></div>';
-c.onclick=()=>this.play(i);g.appendChild(c)})},
-async play(i){const t=this.results[i];if(!t)return;this.cur=i;
-const title=t.trackName||"Untitled",artist=t.artistName||"",art=(t.artworkUrl100||"").replace("100x100bb","600x600bb");
-$("title").textContent=title;$("artist").textContent=artist;$("art").src=art;$("glow").style.backgroundImage="url('"+art+"')";
-document.querySelectorAll(".card").forEach((c,k)=>c.classList.toggle("playing",k===i));
-const A=$("audio");A.src=t.previewUrl;A.play().catch(()=>toast("Play fail — dobara tap karo"));
-this.loadLyrics(artist,title)},
-async loadLyrics(artist,title){this.hi=false;$("tr-btn").classList.remove("on");$("tr-btn").textContent="🌐 हिंदी में देखो";
-$("lyr-src").innerHTML='<span class="spin"></span> lyrics loading…';$("lines").innerHTML="";this.lines=[];
-const tries=[[this.cleanA(artist),this.cleanT(title)],[artist,title]];
-for(const tt of tries){try{const r=await fetch("https://api.lyrics.ovh/v1/"+encodeURIComponent(tt[0])+"/"+encodeURIComponent(tt[1]));const j=await r.json();
-if(j.lyrics&&j.lyrics.trim()){this.setLyrics(j.lyrics,tt[0],tt[1]);return}}catch(_){}}
-$("lyr-src").textContent="lyrics nahi mile — koi popular English gaana try karo";
-$("lines").innerHTML='<div class="empty">Is gaane ke lyrics available nahi hai.<br/>English hits pe sabse zyada milte hai.</div>'},
-setLyrics(txt,a,t){this.orig=txt;this.trans="";const raw=txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-const dur=$("audio").duration||30;this.lines=raw.map((x,i)=>({t:i*(dur/Math.max(1,raw.length)),x}));
-$("lyr-src").textContent=raw.length+" lines • audio ke saath highlight • tap = seek";
-const box=$("lines");box.innerHTML="";this.lines.forEach(l=>{const d=document.createElement("div");d.className="line";d.textContent=l.x;
-d.onclick=()=>{try{$("audio").currentTime=l.t+.01}catch(_){}};box.appendChild(d)});this.lastHl=-1;this.hl(0)},
-hl(t){const els=document.querySelectorAll("#lines .line");if(!els.length)return;let bi=0;this.lines.forEach((l,i)=>{if(t>=l.t-.05)bi=i});
-els.forEach((e,i)=>{e.classList.toggle("on",i===bi);if(i===bi&&this.lastHl!==bi)e.scrollIntoView({block:"nearest",behavior:"smooth"})});this.lastHl=bi},
-async translate(){if(!this.lines.length)return toast("Pehle lyrics load hone do");
-if(this.hi){this.hi=false;$("tr-btn").classList.remove("on");$("tr-btn").textContent="🌐 हिंदी में देखो";this.setLyrics(this.orig,"","");return}
-$("tr-btn").innerHTML='<span class="spin"></span> अनुवाद…';
-try{const chunks=[];let c="";this.orig.split("\n").forEach(ln=>{if((c+"\n"+ln).length>420){chunks.push(c);c=ln}else c+="\n"+ln});if(c.trim())chunks.push(c);
-let out="";for(const ch of chunks){const r=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(ch)+"&langpair=en|hi");const j=await r.json();out+=(j.responseData&&j.responseData.translatedText?j.responseData.translatedText:ch)+"\n"}
-this.trans=out.trim();this.hi=true;$("tr-btn").classList.add("on");$("tr-btn").textContent="↩ Original देखो";
-const tl=this.trans.split("\n"),box=$("lines");box.innerHTML="";
-this.lines.forEach((l,i)=>{const d=document.createElement("div");d.className="line"+(i===this.lastHl?" on":"");
-d.innerHTML=esc(tl[i]||l.x)+'<div class="sub">↳ '+esc(l.x)+'</div>';
-d.onclick=()=>{try{$("audio").currentTime=l.t+.01}catch(_){}};box.appendChild(d)});
-$("lyr-src").textContent="हिंदी अनुवाद • original neeche halka";toast("हिंदी अनुवाद ready!")}
-catch(e){$("tr-btn").textContent="🌐 हिंदी में देखो";toast("Translate fail — thodi der me retry karo")}}
-};
-P.init();
+A.volume=.9;
+renderSide();renderLibrary();
+doSearch();
 </script>
 </body>
 </html>
