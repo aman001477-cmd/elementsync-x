@@ -1,5 +1,6 @@
-# ElementSync X secrets — never commit real keys
-firebase-config.js
+# NOTE: firebase-config.js is intentionally COMMITTED (Firebase web keys are public
+# by design — security comes from Firestore rules, which are locked to owner-only).
+# Real server secrets (Admin SDK etc.) must NEVER go in this repo.
 node_modules/
 *.log
 .DS_Store
