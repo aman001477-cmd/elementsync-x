@@ -1,0 +1,6 @@
+# ElementSync X secrets — never commit real keys
+firebase-config.js
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
